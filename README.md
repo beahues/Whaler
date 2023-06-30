@@ -1,5 +1,18 @@
 This image is built from the tool called `Whaler` from https://github.com/P3GLEG/Whaler
 
+# Features
+
+* support multi-platforms, such as linux/arm/v7,linux/arm64/v8,linux/arm/v6,linux/amd64,linux/ppc64le,linux/s390x
+
+### Github Repo
+https://github.com/alpine-docker/dfimage
+
+### build logs
+https://app.circleci.com/pipelines/github/alpine-docker/dfimage
+
+### Docker image tags
+https://hub.docker.com/r/alpine/dfimage/tags/
+
 # Whaler
 
 Whaler is a Go program which is designed to reverse engineer docker images into the Dockerfile that created it. It currently performs the following actions
