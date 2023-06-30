@@ -26,7 +26,8 @@ jobs:
       - run: |
           apk --no-cache --update add bash curl sudo
           echo $REBUILD
-          bash ./build.sh
+          commit=$(git rev-parse --short HEAD)
+          bash ./build.sh dfimage $commit
 
 workflows:
   build:
