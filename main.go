@@ -346,11 +346,24 @@ func printResults(layers []dockerHist) {
 func cleanString(str string) string {
 	s := strings.Join(strings.Fields(str), " ")
 	s = strings.Replace(s, "&&", " \\\n\t&&", -1)
-	if !strings.HasPrefix(s, "/bin/sh -c #(nop)"){
-		s = strings.Replace(s, "/bin/sh -c ", "RUN ", -1)
-	} else {
+
+	// if a shell has been set, commands will have '/bin/sh -c #(nop)' at
+	// the start, yes commands like EXPOSE and LABEL, so strip those out.
+	//     /bin/sh -c #(nop) COPY file:d4375883ed5db...
+	//
+	// otherwise lines can start with the default '/bin/sh -c ...' for a
+	// RUN.
+	if strings.HasPrefix(s, "/bin/sh -c #(nop) ") {
+		s = strings.Replace(s, "/bin/sh -c #(nop) ", "", -1)
+	} else if strings.HasPrefix(s, "RUN /bin/sh -c ") {
+		// it's just a regular RUN line. We can remove the '/bin/sh -c'
+		// part as that won't be in the original Dockerfile
 		s = strings.Replace(s, "/bin/sh -c ", "", -1)
-		s = strings.Replace(s, "#(nop) ", "", -1)
+	} else if strings.HasPrefix(s, "/bin/sh -c ") {
+		// in this case, there's no RUN provided, its just bare shell
+		// command, so replace the sh -c with RUN sh -c emulating a
+		// Dockerfile
+		s = strings.Replace(s, "/bin/sh -c ", "RUN ", -1)
 	}
 	return s
 }
